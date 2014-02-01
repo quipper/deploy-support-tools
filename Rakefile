@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-GetStagingServerName::Application.load_tasks
+HerokuSupportTools::Application.load_tasks
