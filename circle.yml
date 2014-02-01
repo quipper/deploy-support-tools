@@ -1,0 +1,9 @@
+deployment:
+  feature:
+    branch: /^(?!^master$).+$/
+    commands:
+      - echo "doesn't support feature branch deploy"
+  production:
+    branch: master
+    commands:
+      - ./script/heroku_deploy.sh
