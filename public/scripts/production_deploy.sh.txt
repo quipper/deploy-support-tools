@@ -25,6 +25,11 @@ if [ "${HEROKU_APPS}" == "" ]; then
   exit 1
 fi
 
+if [ "${CIRCLE_BRANCH}" != "master" ]; then
+  echo "Only the \"master\" branch is deployable as production"
+  exit 1
+fi
+
 function deploy() {
   cat > ${HOME}/.netrc <<EOF
 machine api.heroku.com
