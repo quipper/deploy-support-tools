@@ -42,7 +42,14 @@ EOF
   chmod 600 ${HOME}/.netrc
 
   HEROKU_APP_NAME=`curl https://quipper-deploy-support-tools.herokuapp.com/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
-  git remote add heroku git@heroku.com:${HEROKU_APP_NAME}.git
+
+  if [ "${HEROKU_APP_NAME}" == "" ]; then
+    echo "failed to get a staging app name"
+    exit 1
+  fi
+
+  heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME}
+
   prepare_for_staging_server
 
   git fetch heroku
