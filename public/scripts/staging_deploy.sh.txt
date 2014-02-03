@@ -18,18 +18,18 @@ if [ ! -f "${HOME}/.ssh/id_heroku.com.pub" ]; then
   exit 1
 fi
 
-if [ ! -f "${STAGING_APP_PREFIX}" ]; then
-  echo "STAGING_APP_PREFIX is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+if [ "${STAGING_APP_PREFIX}" == "" ]; then
+  echo "STAGING_APP_PREFIX is not set"
   exit 1
 fi
 
-if [ ! -f "${NUM_OF_STAGING_SERVERS}" ]; then
-  echo "NUM_OF_STAGING_SERVERS is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+if [ "${NUM_OF_STAGING_SERVERS}" == "" ]; then
+  echo "NUM_OF_STAGING_SERVERS is not set"
   exit 1
 fi
 
-if [ ! -f "${CIRCLE_BRANCH}" ]; then
-  echo "CIRCLE_BRANCH is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+if [ "${CIRCLE_BRANCH}" == "" ]; then
+  echo "CIRCLE_BRANCH is not set"
   exit 1
 fi
 
@@ -41,7 +41,7 @@ machine api.heroku.com
 EOF
   chmod 600 ${HOME}/.netrc
 
-  HEROKU_APP_NAME=`curl https://quipper-heroku-support-tools.herokuapp.com/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  HEROKU_APP_NAME=`curl https://quipper-deploy-support-tools.herokuapp.com/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
   git remote add heroku git@heroku.com:${HEROKU_APP_NAME}.git
   prepare_for_staging_server
 

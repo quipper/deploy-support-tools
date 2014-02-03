@@ -21,7 +21,7 @@ if [ ! -f "${HOME}/.ssh/id_heroku.com.pub" ]; then
 fi
 
 if [ "${HEROKU_APPS}" == "" ]; then
-  echo "HEROKU_APPS is not set in CircleCI."
+  echo "HEROKU_APPS is not set"
   exit 1
 fi
 
