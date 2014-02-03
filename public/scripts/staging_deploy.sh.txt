@@ -1,0 +1,45 @@
+if [ "${CIRCLECI}" == "" ]; then
+  echo 'not in CircleCI env'
+  exit 1
+fi
+
+if [ "${HEROKU_USER}" == "" ]; then
+  echo "HEROKU_USER is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${HEROKU_API_TOKEN}" == "" ]; then
+  echo "HEROKU_API_TOKEN is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ ! -f "${HOME}/.ssh/id_heroku.com.pub" ]; then
+  echo "SSH is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+  exit 1
+fi
+
+if [ ! -f "${APP_PREFIX}" ]; then
+  echo "APP_PREFIX is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+  exit 1
+fi
+
+if [ ! -f "${CIRCLE_BRANCH}" ]; then
+  echo "CIRCLE_BRANCH is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+  exit 1
+fi
+
+function deploy() {
+  cat > ${HOME}/.netrc <<EOF
+machine api.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+EOF
+  chmod 600 ${HOME}/.netrc
+
+  HEROKU_APP_NAME=`curl https://quipper-heroku-support-tools.herokuapp.com/apps --data "app=${APP_PREFIX}&branch=${APP_BRANCH}&servers=4"`
+  git remote add heroku git@heroku.com:${HEROKU_APP_NAME}.git
+  prepare_for_staging_server
+
+  git fetch heroku
+  git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
+}

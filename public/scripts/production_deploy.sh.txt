@@ -1,0 +1,43 @@
+#!/bin/bash -e
+
+if [ "${CIRCLECI}" == "" ]; then
+  echo 'not in CircleCI env'
+  exit 1
+fi
+
+if [ "${HEROKU_USER}" == "" ]; then
+  echo "HEROKU_USER is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${HEROKU_API_TOKEN}" == "" ]; then
+  echo "HEROKU_API_TOKEN is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ ! -f "${HOME}/.ssh/id_heroku.com.pub" ]; then
+  echo "SSH is not set for Heroku in CircleCI. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#ssh"
+  exit 1
+fi
+
+if [ "${HEROKU_APPS}" == "" ]; then
+  echo "HEROKU_APPS is not set in CircleCI."
+  exit 1
+fi
+
+function deploy() {
+  cat > ${HOME}/.netrc <<EOF
+machine api.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+EOF
+
+  chmod 600 ${HOME}/.netrc
+
+  for herokuapp in ${HEROKU_APPS}
+  do
+      git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git
+      git fetch heroku-${herokuapp}
+      git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
+  done
+}
