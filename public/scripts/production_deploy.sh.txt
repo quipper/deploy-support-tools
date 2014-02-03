@@ -42,7 +42,6 @@ EOF
   for herokuapp in ${HEROKU_APPS}
   do
       git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git
-      git fetch heroku-${herokuapp}
       git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
   done
 }

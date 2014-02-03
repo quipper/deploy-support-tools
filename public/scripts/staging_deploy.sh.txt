@@ -52,6 +52,5 @@ EOF
 
   prepare_for_staging_server
 
-  git fetch heroku
   git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
 }
