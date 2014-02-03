@@ -6,4 +6,4 @@ deployment:
   production:
     branch: master
     commands:
-      - ./script/heroku_deploy.sh
+      - ./script/production_deploy.sh
