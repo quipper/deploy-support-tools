@@ -5,7 +5,7 @@ class AppsController < ApplicationController
   def index
     apps = Rails.cache.read(APPS_KEY) || []
     json = apps.map do |app|
-      {name: app, servers: Rails.cache.read("app-${app}")}
+      {name: app, servers: Rails.cache.read("app-#{app}")}
     end
     render json: json
   end
@@ -17,10 +17,10 @@ class AppsController < ApplicationController
 
     apps = Rails.cache.read(APPS_KEY) || []
     apps << app
-    apps.uniq!
+    apps = apps.sort.uniq
     Rails.cache.write(APPS_KEY, apps)
 
-    cache_key = "app-${app}"
+    cache_key = "app-#{app}"
     keys = Rails.cache.read(cache_key) || []
 
     # keys structure

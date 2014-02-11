@@ -39,9 +39,17 @@ describe AppsController do
         expect(response).to be_success
         expect(response.body).to eql("quipper-foo-staging-1")
 
+        post "/apps", app: "bar", branch: "feature-xxx", servers: 1
+        expect(response).to be_success
+        expect(response.body).to eql("quipper-bar-staging-1")
+
         get "/apps"
         expect(response).to be_success
-        expect(JSON.parse(response.body)).to eql([{"name" => "foo",
+        expect(JSON.parse(response.body)).to eql([{"name" => "bar",
+                                                   "servers" =>
+                                                     [{"branch_name" => "feature-xxx",
+                                                       "last_use" => Time.now.as_json}]},
+                                                  {"name" => "foo",
                                                    "servers" =>
                                                      [{"branch_name" => "feature-zzz",
                                                        "last_use" => Time.now.as_json}]}])
