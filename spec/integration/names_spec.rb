@@ -34,9 +34,18 @@ describe AppsController do
       expect(response.body).to eql("quipper-foo-staging-3")
 
       # reduced server
-      post "/apps", app: "foo", branch: "feature-zzz", servers: 1
-      expect(response).to be_success
-      expect(response.body).to eql("quipper-foo-staging-1")
+      Timecop.freeze do
+        post "/apps", app: "foo", branch: "feature-zzz", servers: 1
+        expect(response).to be_success
+        expect(response.body).to eql("quipper-foo-staging-1")
+
+        get "/apps"
+        expect(response).to be_success
+        expect(JSON.parse(response.body)).to eql([{"name" => "foo",
+                                                   "servers" =>
+                                                     [{"branch_name" => "feature-zzz",
+                                                       "last_use" => Time.now.as_json}]}])
+      end
     end
   end
 end

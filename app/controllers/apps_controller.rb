@@ -1,7 +1,13 @@
 class AppsController < ApplicationController
 
+  APPS_KEY = "apps"
+
   def index
-    render text: "Hello"
+    apps = Rails.cache.read(APPS_KEY) || []
+    json = apps.map do |app|
+      {name: app, servers: Rails.cache.read("app-${app}")}
+    end
+    render json: json
   end
 
   def create
@@ -9,8 +15,12 @@ class AppsController < ApplicationController
     branch = params["branch"] || raise("branch is not set")
     servers = (params["servers"] || 4).to_i
 
-    cache_key = "app-${app}"
+    apps = Rails.cache.read(APPS_KEY) || []
+    apps << app
+    apps.uniq!
+    Rails.cache.write(APPS_KEY, apps)
 
+    cache_key = "app-${app}"
     keys = Rails.cache.read(cache_key) || []
 
     # keys structure
