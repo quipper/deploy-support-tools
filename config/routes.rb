@@ -1,4 +1,4 @@
 HerokuSupportTools::Application.routes.draw do
   root to: "apps#index"
-  resources :apps, only: [:create]
+  resources :apps, only: [:index, :create]
 end
