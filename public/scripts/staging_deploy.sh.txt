@@ -53,4 +53,6 @@ EOF
   prepare_for_staging_server
 
   git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
+
+  heroku config:add CIRCLE_SHA1=${CIRCLE_SHA1} CIRCLE_BRANCH=${CIRCLE_BRANCH} --app ${HEROKU_APP_NAME}
 }
