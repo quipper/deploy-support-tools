@@ -50,6 +50,6 @@ class AppsController < ApplicationController
     end
 
     keys = Rails.cache.write(cache_key, keys)
-    render text: "quipper-#{app}-staging-#{app_number}"
+    render text: "#{app}-staging-#{app_number}"
   end
 end
