@@ -24,3 +24,5 @@ HerokuSupportTools::Application.configure do
   # number of complex assets.
   config.assets.debug = true
 end
+
+ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://localhost:3000/apps'
