@@ -43,7 +43,7 @@ describe AppsController do
         expect(response).to be_success
         expect(response.body).to eql("bar-staging-1")
 
-        get "/apps"
+        get "/apps", nil, http_auth_header
         expect(response).to be_success
         expect(JSON.parse(response.body)).to eql([{"name" => "bar",
                                                    "servers" =>
