@@ -7,7 +7,7 @@ describe ScriptsController do
       get "/scripts/production_deploy.sh.txt"
       expect(response).to be_success
       expect(response.content_type.to_s).to eql('text/plain')
-      expect(response.body).to be_include('function deploy()')
+      expect(response.body).to include('function deploy()')
     end
   end
 
@@ -17,8 +17,8 @@ describe ScriptsController do
       get "/scripts/staging_deploy.sh.txt"
       expect(response).to be_success
       expect(response.content_type.to_s).to eql('text/plain')
-      expect(response.body).to be_include('function deploy()')
-      expect(response.body).to be_include('http://my-deploy-tool-url.herokuapp.com/apps')
+      expect(response.body).to include('function deploy()')
+      expect(response.body).to include('http://my-deploy-tool-url.herokuapp.com/apps')
     end
   end
 end
