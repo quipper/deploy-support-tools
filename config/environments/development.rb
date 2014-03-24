@@ -25,4 +25,4 @@ HerokuSupportTools::Application.configure do
   config.assets.debug = true
 end
 
-ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://localhost:3000/apps'
+ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://localhost:3000'

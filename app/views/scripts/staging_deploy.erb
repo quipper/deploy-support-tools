@@ -41,7 +41,7 @@ machine api.heroku.com
 EOF
   chmod 600 ${HOME}/.netrc
 
-  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %> --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
 
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
@@ -70,7 +70,7 @@ function notify() {
     exit 1
   fi
 
-  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %> --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
 
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
