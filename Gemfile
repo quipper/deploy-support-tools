@@ -25,6 +25,8 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'dalli'
+gem 'hipchat'
+
 group :production do
   gem 'memcachier'
   gem 'unicorn'
