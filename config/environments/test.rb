@@ -34,5 +34,3 @@ HerokuSupportTools::Application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 end
-
-ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://my-deploy-tool-url.herokuapp.com/apps'

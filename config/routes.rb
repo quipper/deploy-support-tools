@@ -3,4 +3,5 @@ HerokuSupportTools::Application.routes.draw do
   resources :apps, only: [:index, :create]
   get '/scripts/production_deploy.sh(.:format)', to: 'scripts#production_deploy'
   get '/scripts/staging_deploy.sh(.:format)', to: 'scripts#staging_deploy'
+  post '/notifications/hipchat', to: 'notifications#hipchat'
 end

@@ -2,6 +2,7 @@
 ENV["AUTH_USER"] ||= ''
 ENV["AUTH_PASSWORD"] ||= ''
 ENV["RAILS_ENV"] ||= 'test'
+ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://my-deploy-tool-url.herokuapp.com'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'

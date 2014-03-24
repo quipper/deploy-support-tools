@@ -41,7 +41,7 @@ machine api.heroku.com
 EOF
   chmod 600 ${HOME}/.netrc
 
-  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %> --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
 
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
@@ -57,4 +57,27 @@ EOF
   git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
 
   heroku config:add CIRCLE_SHA1=${CIRCLE_SHA1} CIRCLE_BRANCH=${CIRCLE_BRANCH} --app ${HEROKU_APP_NAME}
+}
+
+function notify() {
+  if [ "${HIPCHAT_API_TOKEN}" == "" ]; then
+    echo "failed to get hipchat api token"
+    exit 1
+  fi
+
+  if [ "${HIPCHAT_ROOM}" == "" ]; then
+    echo "failed to get hipchat room"
+    exit 1
+  fi
+
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+
+  if [ "${HEROKU_APP_NAME}" == "" ]; then
+    echo "failed to get a staging app name"
+    exit 1
+  fi
+
+  URL="https://${HEROKU_APP_NAME}.herokuapp.com"
+
+  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
 }
