@@ -60,13 +60,13 @@ EOF
 }
 
 function notify() {
-  if [ "$#" -ne 1 ]; then
-    echo "useage: notify([ROOM])"
+  if [ "${HIPCHAT_API_TOKEN}" == "" ]; then
+    echo "failed to get hipchat api token"
     exit 1
   fi
 
-  if [ "${HIPCHAT_API_TOKEN}" == "" ]; then
-    echo "failed to get hipchat api token"
+  if [ "${HIPCHAT_ROOM}" == "" ]; then
+    echo "failed to get hipchat room"
     exit 1
   fi
 
@@ -77,8 +77,7 @@ function notify() {
     exit 1
   fi
 
-  ROOM=$1
   URL="https://${HEROKU_APP_NAME}.herokuapp.com"
 
-  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
+  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
 }
