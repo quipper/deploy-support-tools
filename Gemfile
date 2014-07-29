@@ -26,6 +26,7 @@ end
 
 gem 'dalli'
 gem 'hipchat'
+gem 'httpclient'
 
 group :production do
   gem 'memcachier'
