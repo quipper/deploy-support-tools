@@ -56,7 +56,7 @@ EOF
   [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
   git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
 
-  notify_all()
+  notify_all
 }
 
 function notify() {
