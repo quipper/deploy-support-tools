@@ -42,6 +42,7 @@ GEM
     httparty (0.13.0)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
+    httpclient (2.4.0)
     i18n (0.6.9)
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
@@ -134,6 +135,7 @@ PLATFORMS
 DEPENDENCIES
   dalli
   hipchat
+  httpclient
   jbuilder (~> 1.2)
   memcachier
   pry-byebug

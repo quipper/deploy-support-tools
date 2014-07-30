@@ -78,4 +78,11 @@ function notify() {
   URL="https://${HEROKU_APP_NAME}.herokuapp.com"
 
   curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
+  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/deployments \
+    -d "user=${CIRCLE_PROJECT_USERNAME}" \
+    -d "repo=${CIRCLE_PROJECT_REPONAME}" \
+    -d "ref=${CIRCLE_BRANCH}" \
+    -d "environment=staging" \
+    -d "state=success" \
+    -d "target_url=${URL}"
 }
