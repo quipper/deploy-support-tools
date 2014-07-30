@@ -55,29 +55,29 @@ EOF
   # https://github.com/quipper/deploy-support-tools/pull/5#issuecomment-36588889
   [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
   git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
+
+  notify_all()
 }
 
 function notify() {
-  if [ "${HIPCHAT_API_TOKEN}" == "" ]; then
-    echo "failed to get hipchat api token"
-    exit 1
-  fi
+  # this is dummy method for a backward compatbility
+}
 
-  if [ "${HIPCHAT_ROOM}" == "" ]; then
-    echo "failed to get hipchat room"
-    exit 1
-  fi
-
+function notify_all() {
   HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  URL="https://${HEROKU_APP_NAME}.herokuapp.com"
 
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
     exit 1
   fi
 
-  URL="https://${HEROKU_APP_NAME}.herokuapp.com"
+  # notify hipchat
+  if [ "${HIPCHAT_API_TOKEN}" != "" -a "${HIPCHAT_ROOM}" != "" ]; then
+    curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
+  fi
 
-  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
+  # notify github via deployments api
   curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/deployments \
     -d "user=${CIRCLE_PROJECT_USERNAME}" \
     -d "repo=${CIRCLE_PROJECT_REPONAME}" \
