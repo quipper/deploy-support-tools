@@ -2,7 +2,7 @@ class Deployment
   attr_accessor :token, :user, :repo, :ref, :environment, :state, :target_url, :github_deployments_api_status_url
 
   def initialize(deployment_params)
-    @token       = deployment_params[:token].presence || ENV["GITHUB_API_TOKEN"]
+    @token       = ENV["GITHUB_API_TOKEN"]
     @user        = deployment_params[:user]
     @repo        = deployment_params[:repo]
     @ref         = deployment_params[:ref]

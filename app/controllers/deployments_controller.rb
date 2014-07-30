@@ -10,6 +10,6 @@ class DeploymentsController < ApplicationController
   private
 
   def deployment_params
-    params.slice(:token, :user, :repo, :ref, :environment, :state, :target_url)
+    params.slice(:user, :repo, :ref, :environment, :state, :target_url)
   end
 end
