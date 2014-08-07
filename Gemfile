@@ -27,6 +27,11 @@ end
 gem 'dalli'
 gem 'hipchat'
 gem 'httpclient'
+gem 'bootstrap-sass'
+gem 'sass-rails'
+gem 'sprockets', '=2.11.0'
+gem 'jquery-rails'
+gem 'coffee-rails'
 
 group :production do
   gem 'memcachier'
