@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Deploy support tools</title>
+  </head>
+  <body>
+    <% if @apps.present? %>
+      <ul>
+        <% @apps.each do |app| %>
+          <li><%= app %>
+            <% servers = Rails.cache.read("app-#{app}") %>
+            <% if servers.present? %>
+              <ol>
+                <% servers.each.with_index do |server, index| %>
+                  <% staging_url = staging_url_for_app(app, index+1) %>
+                  <li>
+                    <%= link_to_if staging_url.match(/\Ahttps?:\/\//), staging_url, staging_url, {target: "_blank"} %>
+                    <span><%= server['branch_name'] %></span>
+                    <span><%= time_ago_in_words(Time.parse(server['last_use'])) + " ago" %></span>
+                  </li>
+                <% end %>
+              </ol>
+            <% end %>
+        <% end %>
+      </ul>
+    <% end %>
+  </body>
+</html>
