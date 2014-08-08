@@ -48,32 +48,33 @@ EOF
     exit 1
   fi
 
+  check_missing_blob
+
   heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME}
 
   prepare_for_staging_server
 
   # https://github.com/quipper/deploy-support-tools/pull/5#issuecomment-36588889
   [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
-  # git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
-  if ! git push -f heroku ${CIRCLE_SHA1}:refs/heads/master; then
-    reclone
-    git reset --hard ${CIRCLE_SHA1} # this isn't strictly necessary
-    git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
-  fi
+  git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
 
   notify_all
+}
+
+function check_missing_blob() {
+  if [[ -n $(git fsck --no-progress | grep -F missing) ]]; then
+    reclone
+  fi
 }
 
 function reclone() {
   REMOTE=`git ls-remote --get-url origin`
   CUR=`pwd`
-
-  cd /home/ubuntu # or cd ~/
+  cd ~/
   rm -rf ${CUR}
   git clone ${REMOTE}
   cd ${CUR}
-
-  heroku git:remote --app ${HEROKU_APP_NAME}
+  git reset --hard ${CIRCLE_SHA1} # this isn't strictly necessary
 }
 
 function notify() {
