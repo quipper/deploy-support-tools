@@ -1,6 +1,6 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["AUTH_USER"] ||= ''
-ENV["AUTH_PASSWORD"] ||= ''
+ENV["AUTH_USER"] ||= 'melody'
+ENV["AUTH_PASSWORD"] ||= 'nelson'
 ENV["RAILS_ENV"] ||= 'test'
 ENV['DEPLOY_SUPPORT_TOOL_URL'] ||= 'http://my-deploy-tool-url.herokuapp.com'
 require File.expand_path("../../config/environment", __FILE__)
@@ -47,6 +47,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+  config.infer_spec_type_from_file_location!
 
   config.before(:each) do
     Rails.cache.clear
