@@ -58,6 +58,7 @@ EOF
   # git push -f heroku ${CIRCLE_SHA1}:refs/heads/master
 
   # https://github.com/quipper/snippets/issues/71
+  # If push to Heroku fails, take a fresh clone of project from Github
   if ! git push -f heroku ${CIRCLE_SHA1}:refs/heads/master; then
     clone
   fi
