@@ -62,7 +62,7 @@ EOF
 }
 
 function check_missing_blob() {
-  if [[ -n $(git fsck --no-progress | grep -F missing) ]]; then
+  if [[ -n $(git fsck --no-progress | grep -E "(missing|dangling)") ]]; then
     reclone
   fi
 }
