@@ -4,11 +4,7 @@ class AppsController < ApplicationController
   APPS_KEY = "apps"
 
   def index
-    apps = Rails.cache.read(APPS_KEY) || []
-    json = apps.map do |app|
-      {name: app, servers: Rails.cache.read("app-#{app}")}
-    end
-    render json: json
+    @apps = Rails.cache.read(APPS_KEY) || []
   end
 
   def create
