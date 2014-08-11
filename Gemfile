@@ -27,4 +27,5 @@ group :development, :test do
   gem 'capybara'
   gem 'pry-byebug'
   gem 'timecop'
+  gem 'dotenv-rails'
 end
