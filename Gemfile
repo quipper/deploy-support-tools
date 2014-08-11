@@ -16,6 +16,7 @@ gem 'sass-rails'
 gem 'sprockets', '=2.11.0'
 gem 'jquery-rails'
 gem 'coffee-rails'
+gem 'uglifier'
 
 group :production do
   gem 'memcachier'
