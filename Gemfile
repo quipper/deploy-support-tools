@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
-ruby "2.1.0"
+ruby "2.1.2"
 
-gem 'rails', '4.0.5'
+gem 'rails', '4.1.4'
 gem 'jbuilder', '~> 1.2'
 
 group :doc do
@@ -27,4 +27,5 @@ group :development, :test do
   gem 'capybara'
   gem 'pry-byebug'
   gem 'timecop'
+  gem 'dotenv-rails'
 end
