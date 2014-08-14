@@ -31,7 +31,7 @@
                   <td><%= index + 1 %>.</td>
                   <td><%= link_to_if staging_url.match(/\Ahttps?:\/\//), staging_url, staging_url, {target: "_blank"} %></td>
                   <td><%= server['branch_name'] %></td>
-                  <td><time datetime="<%= server['last_use'] %>"><%= time_ago_in_words(Time.parse(server['last_use'])) + " ago" %></time></td>
+                  <td><time datetime="<%= server['last_use'] %>"><%= time_ago_in_words(server['last_use']) + " ago" %></time></td>
                 </tr>
               <% end %>
             </table>
