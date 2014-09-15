@@ -37,6 +37,8 @@ EOF
   for herokuapp in ${HEROKU_APPS}
   do
       heroku join --app ${herokuapp}
+      heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}"
+
       git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git
       # https://github.com/quipper/deploy-support-tools/pull/5#issuecomment-36588889
       [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
