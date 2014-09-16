@@ -51,7 +51,7 @@ EOF
   check_missing_blob
 
   heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME}
-  heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}"
+  heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}" --app ${HEROKU_APP_NAME}
 
   prepare_for_staging_server
 
