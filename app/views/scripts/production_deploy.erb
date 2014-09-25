@@ -43,6 +43,13 @@ EOF
       git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git
       # https://github.com/quipper/deploy-support-tools/pull/5#issuecomment-36588889
       [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
-      git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
+      if ! git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master; then
+          rm -rf /home/ubuntu/${CIRCLE_PROJECT_REPONAME}
+          cd /home/ubuntu
+          git clone git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git
+          cd ${CIRCLE_PROJECT_REPONAME}
+          git reset --hard ${CIRCLE_SHA1}  # this isn't strictly necessary
+          git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
+      fi
   done
 }
