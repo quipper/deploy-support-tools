@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 HEROKU_APPS="quipper-deploy-support-tools"
 
