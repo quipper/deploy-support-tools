@@ -50,7 +50,13 @@ EOF
 
   check_missing_blob
 
-  heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME}
+  if [ "${HEROKU_ORGANIZATION}" != "" ]; then
+    OPTION_HEROKU_ORGANIZATION="--org ${HEROKU_ORGANIZATION}"
+  else
+    OPTION_HEROKU_ORGANIZATION=""
+  fi
+
+  heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME} ${OPTION_HEROKU_ORGANIZATION}
   heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}" --app ${HEROKU_APP_NAME}
 
   prepare_for_staging_server
