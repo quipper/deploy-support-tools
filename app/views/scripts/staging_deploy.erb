@@ -58,6 +58,7 @@ EOF
 
   heroku git:remote --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME} ${OPTION_HEROKU_ORGANIZATION}
   heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}" --app ${HEROKU_APP_NAME}
+  heroku domains:add https://${HEROKU_APP_NAME}.${STAGING_APP_DOMAIN:-herokuapp.com} --app ${HEROKU_APP_NAME} || :
 
   prepare_for_staging_server
 
@@ -91,7 +92,7 @@ function notify() {
 
 function notify_all() {
   HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
-  URL="https://${HEROKU_APP_NAME}.herokuapp.com"
+  URL="https://${HEROKU_APP_NAME}.${STAGING_APP_DOMAIN:-herokuapp.com}"
 
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
