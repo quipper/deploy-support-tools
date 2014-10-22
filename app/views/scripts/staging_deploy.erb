@@ -89,14 +89,18 @@ function notify() {
   :
 }
 
+function build_url() {
+  echo "https://${1}.herokuapp.com"
+}
+
 function notify_all() {
   HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
-  URL="https://${HEROKU_APP_NAME}.herokuapp.com"
-
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
     exit 1
   fi
+
+  URL=`build_url ${HEROKU_APP_NAME}`
 
   # notify hipchat
   if [ "${HIPCHAT_API_TOKEN}" != "" -a "${HIPCHAT_ROOM}" != "" ]; then
