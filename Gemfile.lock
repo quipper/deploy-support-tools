@@ -27,6 +27,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    addressable (2.3.8)
     arel (5.0.1.20140414130214)
     bootstrap-sass (3.3.1.0)
       sass (~> 3.2)
@@ -58,6 +59,8 @@ GEM
       dotenv (= 1.0.2)
     erubis (2.7.0)
     execjs (2.2.2)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
     hike (1.2.3)
     hipchat (1.4.0)
       httparty
@@ -83,8 +86,11 @@ GEM
     minitest (5.4.3)
     multi_json (1.10.1)
     multi_xml (0.5.5)
+    multipart-post (2.0.0)
     nokogiri (1.6.5)
       mini_portile (~> 0.6.0)
+    octokit (3.8.0)
+      sawyer (~> 0.6.0, >= 0.5.3)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -141,6 +147,9 @@ GEM
       sass (~> 3.2.2)
       sprockets (~> 2.8, < 3.0)
       sprockets-rails (~> 2.0)
+    sawyer (0.6.0)
+      addressable (~> 2.3.5)
+      faraday (~> 0.8, < 0.10)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -184,6 +193,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jquery-rails
   memcachier
+  octokit
   pry-byebug
   rails (~> 4.1.0)
   rails_12factor
