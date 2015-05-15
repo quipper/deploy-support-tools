@@ -1,6 +1,6 @@
 class StagingUrl
-  def initialize(github_pull_request_url, github_api_token: nil, circleci_api_token: nil)
-    @github_pull_request_url = github_pull_request_url
+  def initialize(text, github_api_token: nil, circleci_api_token: nil)
+    @text = text
     @github_api_token   = github_api_token   || ENV['GITHUB_API_TOKEN']   || raise(ArgumentError.new("GITHUB_API_TOKEN is required."))
     @circleci_api_token = circleci_api_token || ENV['CIRCLECI_API_TOKEN'] || raise(ArgumentError.new("CIRCLECI_API_TOKEN is required."))
     parse
@@ -15,7 +15,7 @@ class StagingUrl
   private
 
   def parse
-    _, @user, @repo, @number = *Addressable::URI.parse(@github_pull_request_url).path.match(%r!\A/([^/]+)/([^/]+)/pull/(\d+)\z!)
+    _, @user, @repo, @number = *@text.match(%r!/([^/]+)/([^/]+)/pull/(\d+)!)
   end
 
   def get_git_branch_name
