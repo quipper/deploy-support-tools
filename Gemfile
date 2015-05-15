@@ -17,6 +17,7 @@ gem 'sprockets', '=2.11.0'
 gem 'jquery-rails'
 gem 'coffee-rails'
 gem 'uglifier'
+gem 'octokit'
 
 group :production do
   gem 'memcachier'

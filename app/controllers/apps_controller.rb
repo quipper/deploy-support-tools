@@ -1,5 +1,5 @@
 class AppsController < ApplicationController
-  http_basic_authenticate_with name: ENV["AUTH_USER"], password: ENV["AUTH_PASSWORD"], except: :create
+  http_basic_authenticate_with name: ENV["AUTH_USER"], password: ENV["AUTH_PASSWORD"], except: [:create, :staging_url]
 
   APPS_KEY = "apps"
 
@@ -22,5 +22,9 @@ class AppsController < ApplicationController
     kiosk.save
 
     render text: "#{app}-staging-#{app_number}"
+  end
+
+  def staging_url
+    render json: { text: StagingUrl.new(params[:text]).to_s }
   end
 end
