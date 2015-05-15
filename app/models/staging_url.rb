@@ -9,7 +9,11 @@ class StagingUrl
   end
 
   def to_s
-    "https://#{@heroku_url.sub(/^quipper-/, '')}.quipper.net"
+    if @heroku_url
+      "https://#{@heroku_url.sub(/^quipper-/, '')}.quipper.net"
+    else
+      "Can't find staging url. Perhaps that PR is not deployed yet?"
+    end
   end
 
   private
