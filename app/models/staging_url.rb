@@ -42,6 +42,6 @@ class StagingUrl
     response = Faraday.get step['actions'][0]['output_url']
 
     # Extract deployed heroku app name
-    @heroku_url = JSON.parse(response.body)[0]['message'].match(/HEROKU_APP_NAME=(\S+)/)[1]
+    @heroku_url = JSON.parse(response.body)[0]['message'].match(%r!https://(.+)?\.herokuapp\.com/ deployed to Heroku!)[1]
   end
 end
