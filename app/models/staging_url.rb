@@ -35,6 +35,9 @@ class StagingUrl
     end
     build = JSON.parse(response.body).first
 
+    # If there are no successful build against that branch, staging url is not available.
+    return unless build
+
     # Get build step log of staging deploy
     response = conn.get do |req|
       req.url "/api/v1/project/#{@user}/#{@repo}/#{build['build_num']}"
@@ -43,6 +46,10 @@ class StagingUrl
     step = JSON.parse(response.body)['steps'].detect { |step|
       step['name'].match(/staging_deploy\.sh/)
     }
+
+    # If there is no staging_deploy.sh step, staging url is not available.
+    return unless step
+
     response = Faraday.get step['actions'][0]['output_url']
 
     # Extract deployed heroku app name
