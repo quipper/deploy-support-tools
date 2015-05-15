@@ -9,7 +9,11 @@ class StagingUrl
   end
 
   def to_s
-    "https://#{@heroku_url.sub(/^quipper-/, '')}.quipper.net"
+    if @heroku_url
+      "https://#{@heroku_url.sub(/^quipper-/, '')}.quipper.net"
+    else
+      "Can't find staging url. Perhaps that PR is not deployed yet?"
+    end
   end
 
   private
@@ -42,6 +46,6 @@ class StagingUrl
     response = Faraday.get step['actions'][0]['output_url']
 
     # Extract deployed heroku app name
-    @heroku_url = JSON.parse(response.body)[0]['message'].match(/HEROKU_APP_NAME=(\S+)/)[1]
+    @heroku_url = JSON.parse(response.body)[0]['message'].match(%r!https://(.+)?\.herokuapp\.com/ deployed to Heroku!)[1]
   end
 end
