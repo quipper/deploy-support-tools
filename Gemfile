@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.2.2"
+ruby File.read(File.join File.dirname(__FILE__), '.ruby-version').strip
 
 gem 'rails', '~> 4.1.0'
 gem 'jbuilder', '~> 1.2'
