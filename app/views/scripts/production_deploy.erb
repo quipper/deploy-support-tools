@@ -26,6 +26,18 @@ if [ "${HEROKU_APPS}" == "" ]; then
 fi
 
 function deploy() {
+  # Support npm
+  if [ -f "package.json" ]; then
+    npm install
+
+    git config --global user.email "jenkins@quipper.com"
+    git config --global user.name "CircleCI"
+
+    git add -f ./node_modules
+    git rm package.json # to avoid wrong language detection on Heroku
+    git commit -a -m 'added node_modules'
+  fi
+
   cat > ${HOME}/.netrc <<EOF
 machine api.heroku.com
   login ${HEROKU_USER}
