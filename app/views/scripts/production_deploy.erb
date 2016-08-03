@@ -25,6 +25,12 @@ if [ "${HEROKU_APPS}" == "" ]; then
   exit 1
 fi
 
+function prepare() {
+  if [ "$(type -t prepare_for_production_server)" == "function" ]; then
+    prepare_for_production_server
+  fi
+}
+
 function deploy() {
   cat > ${HOME}/.netrc <<EOF
 machine api.heroku.com
@@ -40,12 +46,14 @@ EOF
       heroku config:add HEROKU_APP_NAME="${herokuapp}" --app ${herokuapp}
       heroku labs:enable preboot --app ${herokuapp}
 
+      prepare
       git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
       if ! GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master; then
           rm -rf /home/ubuntu/${CIRCLE_PROJECT_REPONAME}
           cd /home/ubuntu
           git clone git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git
           cd ${CIRCLE_PROJECT_REPONAME}
+          prepare
           git reset --hard ${CIRCLE_SHA1}  # this isn't strictly necessary
           GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
       fi
