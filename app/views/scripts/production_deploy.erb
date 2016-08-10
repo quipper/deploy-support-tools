@@ -55,6 +55,7 @@ EOF
           cd ${CIRCLE_PROJECT_REPONAME}
           prepare
           git reset --hard ${CIRCLE_SHA1}  # this isn't strictly necessary
+          git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
           GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
       fi
       heroku config:add GIT_COMMIT_SHA1=${CIRCLE_SHA1} --app ${herokuapp}
