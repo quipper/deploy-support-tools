@@ -42,7 +42,6 @@ EOF
 
   for herokuapp in ${HEROKU_APPS}
   do
-      heroku join --app ${herokuapp}
       heroku config:add HEROKU_APP_NAME="${herokuapp}" --app ${herokuapp}
       heroku labs:enable preboot --app ${herokuapp}
 
