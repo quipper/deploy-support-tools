@@ -80,9 +80,10 @@ function reclone() {
   CUR=`pwd`
   cd ~/
   rm -rf ${CUR}
-  git clone ${REMOTE}
+  git clone --recursive ${REMOTE}
   cd ${CUR}
   git reset --hard ${CIRCLE_SHA1} # this isn't strictly necessary
+  git submodule update
 }
 
 function notify() {
