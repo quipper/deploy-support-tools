@@ -10,4 +10,5 @@ HerokuSupportTools::Application.routes.draw do
   post '/notifications/hipchat', to: 'notifications#hipchat'
 
   resources :deployments, only: [:create]
+  post '/webhook' => 'webhook#receive'
 end
