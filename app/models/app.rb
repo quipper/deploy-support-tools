@@ -25,6 +25,12 @@ class App
     return entries.index(new_entry) + 1
   end
 
+  # Set `removed` flag to an entry with specified branch name
+  def remove(branch)
+    target_entry = entries.find { |e| e['branch_name'] == branch }
+    target_entry['removed'] = true if target_entry
+  end
+
   def save
     store.write name, entries
   end

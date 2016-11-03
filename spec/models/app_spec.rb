@@ -92,4 +92,48 @@ describe App do
       end
     end
   end
+
+  describe '#remove' do
+    context 'when specified branch exists' do
+      before do
+        app.lottery 'foo'
+        app.lottery 'bar'
+        app.lottery 'baz'
+
+        app.remove('bar')
+      end
+
+      it 'set `removed` flag to target branch' do
+        expect(app.entries[0]['removed']).to be_nil
+        expect(app.entries[1]['removed']).to be true
+        expect(app.entries[2]['removed']).to be_nil
+      end
+    end
+
+    context 'when specified branch does not exist' do
+      before do
+        app.lottery 'foo'
+        app.lottery 'bar'
+        app.lottery 'baz'
+
+        app.remove('foobar')
+      end
+
+      it 'does not set `removed` flag to any entries' do
+        expect(app.entries[0]['removed']).to be_nil
+        expect(app.entries[1]['removed']).to be_nil
+        expect(app.entries[2]['removed']).to be_nil
+      end
+    end
+
+    context 'when no entry exists' do
+      before do
+        app.remove('foo')
+      end
+
+      it 'does not change entries' do
+        expect(app.entries).to eq []
+      end
+    end
+  end
 end
