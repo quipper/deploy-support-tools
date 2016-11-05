@@ -12,6 +12,7 @@ class App
     exist_entry = entries.find { |e| e['branch_name'] == branch }
     if exist_entry
       exist_entry['last_use'] = Time.now
+      exist_entry.delete 'removed'
       return entries.index(exist_entry) + 1
     end
 
