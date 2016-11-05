@@ -16,6 +16,13 @@ class App
       return entries.index(exist_entry) + 1
     end
 
+    removed_entry = entries.find { |e| e['removed'] }
+    if removed_entry
+      removed_entry['last_use'] = Time.now
+      removed_entry.delete 'removed'
+      return entries.index(removed_entry) + 1
+    end
+
     if entries.size == max_entries
       oldest_entry = entries.min_by { |e| e['last_use'] }
       oldest_entry.update 'branch_name' => branch, 'last_use' => Time.now

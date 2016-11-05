@@ -102,6 +102,20 @@ describe App do
         app.remove 'baz'
       end
 
+      context 'and pushed a new branch' do
+        it 'deletes "removed" flag' do
+          expect {
+            app.lottery('woo')
+          }.to change {
+            app.entries[1]['removed']
+          }.from(true).to(nil)
+        end
+
+        it 'returns number of removed branch' do
+          expect(app.lottery('woo')).to eq 2
+        end
+      end
+
       context 'and pushed removed branch again' do
         it 'deletes "removed" flag' do
           expect {
