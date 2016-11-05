@@ -54,7 +54,7 @@ describe AppsController do
       end
 
       it "persists repo config into Rails.cache" do
-        expect(store.read('repo_config-quipper/foo')).to eq({app_prefix: 'foo', max_entries: 10})
+        expect(store.read("#{RepoConfig::CACHE_KEY_PREFIX}-quipper/foo")).to eq({app_prefix: 'foo', max_entries: 10})
       end
     end
   end

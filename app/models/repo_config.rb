@@ -1,6 +1,8 @@
 require 'active_model'
 
 class RepoConfig
+  CACHE_KEY_PREFIX = 'repo_config'
+
   include ActiveModel::Model
 
   attr_accessor :app_prefix, :repo_name, :max_entries
@@ -13,7 +15,7 @@ class RepoConfig
     numericality: {only_integer: true, greater_than_or_equal_to: 0}
 
   def self.find_by_repo_name(repo_name)
-    config = Rails.cache.read("config-#{repo_name}")
+    config = Rails.cache.read("#{CACHE_KEY_PREFIX}-#{repo_name}")
     config ? self.new(config) : nil
   end
 
@@ -27,7 +29,7 @@ class RepoConfig
   end
 
   def name
-    "repo_config-#{repo_name}"
+    "#{CACHE_KEY_PREFIX}-#{repo_name}"
   end
 
   def attributes
