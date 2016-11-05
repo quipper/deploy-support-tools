@@ -11,21 +11,19 @@ class App
   def lottery(branch)
     exist_entry = entries.find { |e| e['branch_name'] == branch }
     if exist_entry
-      exist_entry['last_use'] = Time.now
-      exist_entry.delete 'removed'
+      update_entry!(exist_entry, branch)
       return entries.index(exist_entry) + 1
     end
 
     removed_entry = entries.find { |e| e['removed'] }
     if removed_entry
-      removed_entry['last_use'] = Time.now
-      removed_entry.delete 'removed'
+      update_entry!(removed_entry, branch)
       return entries.index(removed_entry) + 1
     end
 
     if entries.size == max_entries
       oldest_entry = entries.min_by { |e| e['last_use'] }
-      oldest_entry.update 'branch_name' => branch, 'last_use' => Time.now
+      update_entry!(oldest_entry, branch)
       return entries.index(oldest_entry) + 1
     end
 
@@ -53,5 +51,14 @@ class App
 
   def trim(_entries)
     _entries[0, max_entries]
+  end
+
+  private
+
+  def update_entry!(entry, branch_name)
+    entry['branch_name'] = branch_name
+    entry['last_use'] = Time.now
+    entry.delete 'removed'
+    entry
   end
 end
