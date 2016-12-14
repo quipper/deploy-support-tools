@@ -11,6 +11,7 @@ class AppsController < ApplicationController
     app = params["app"] || raise("app is not set")
     branch = params["branch"] || raise("branch is not set")
     servers = (params["servers"] || 4).to_i
+    repo_name = params["repo_name"]
 
     apps = Rails.cache.read(APPS_KEY) || []
     apps << app
@@ -20,6 +21,13 @@ class AppsController < ApplicationController
     kiosk = App.new app, servers
     app_number = kiosk.lottery branch
     kiosk.save
+
+    repo_config = RepoConfig.new(
+      repo_name: repo_name,
+      app_prefix: app,
+      max_entries: servers,
+    )
+    repo_config.save if repo_config.valid?
 
     render text: "#{app}-staging-#{app_number}"
   end
