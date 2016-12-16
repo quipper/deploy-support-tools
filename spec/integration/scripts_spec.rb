@@ -20,7 +20,6 @@ describe ScriptsController do
       expect(response.body).to include('function deploy()')
       expect(response.body).to include('http://my-deploy-tool-url.herokuapp.com/apps')
       expect(response.body).to include('function notify()')
-      expect(response.body).to include('http://my-deploy-tool-url.herokuapp.com/notifications/hipchat')
     end
   end
 end

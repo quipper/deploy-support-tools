@@ -104,11 +104,6 @@ function notify_all() {
 
   URL=`build_url ${HEROKU_APP_NAME}`
 
-  # notify hipchat
-  if [ "${HIPCHAT_API_TOKEN}" != "" -a "${HIPCHAT_ROOM}" != "" ]; then
-    curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/notifications/hipchat --data "room=${HIPCHAT_ROOM}&branch=${CIRCLE_BRANCH}&url=${URL}&token=${HIPCHAT_API_TOKEN}"
-  fi
-
   # notify github via deployments api
   curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/deployments \
     -d "user=${CIRCLE_PROJECT_USERNAME}" \
