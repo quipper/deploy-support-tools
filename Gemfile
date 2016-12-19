@@ -9,7 +9,6 @@ group :doc do
 end
 
 gem 'dalli'
-gem 'hipchat'
 gem 'httpclient'
 gem 'bootstrap-sass'
 gem 'sass-rails'
