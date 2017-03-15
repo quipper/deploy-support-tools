@@ -13,15 +13,15 @@ describe AppsHelper, type: :helper do
         stub_env(DEPLOY_SUPPORT_TOOL_STAGING_URL_FORMAT: 'https://%s-staging-%d.herokuapp.com/') { e.run }
       end
 
-      context 'when DEPLOY_SUPPORT_TOOL_IGNORING_PREFIXES is not given' do
+      context 'when DEPLOY_SUPPORT_TOOL_STAGING_URL_OF_IGNORING_PREFIXES is not given' do
         it 'returns formatted url' do
           expect(staging_url_for_app('foo-tomo', 1)).to eq 'https://foo-tomo-staging-1.herokuapp.com/'
         end
       end
 
-      context 'when DEPLOY_SUPPORT_TOOL_IGNORING_PREFIXES is given' do
+      context 'when DEPLOY_SUPPORT_TOOL_STAGING_URL_OF_IGNORING_PREFIXES is given' do
         around do |e|
-          stub_env(DEPLOY_SUPPORT_TOOL_IGNORING_PREFIXES: 'foo,bar') { e.run }
+          stub_env(DEPLOY_SUPPORT_TOOL_STAGING_URL_OF_IGNORING_PREFIXES: 'foo,bar') { e.run }
         end
 
         context 'when app is matched with prefix' do
