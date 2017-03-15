@@ -16,9 +16,12 @@ describe 'Show apps', type: :feature do
   end
 
   describe "GET /" do
+    around do |e|
+      stub_env(DEPLOY_SUPPORT_TOOL_STAGING_URL_FORMAT: 'https://%s-staging-%d.herokuapp.com/') { e.run }
+    end
+
     before do
       page.driver.browser.authorize(ENV['AUTH_USER'], ENV['AUTH_PASSWORD'])
-      ENV['DEPLOY_SUPPORT_TOOL_STAGING_URL_FORMAT'] = "https://%s-staging-%d.herokuapp.com/"
     end
 
     it "shows staging apps URL, branch name and last use" do
