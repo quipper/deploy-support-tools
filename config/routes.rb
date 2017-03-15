@@ -9,4 +9,5 @@ HerokuSupportTools::Application.routes.draw do
   get '/scripts/staging_deploy.sh(.:format)', to: 'scripts#staging_deploy'
 
   resources :deployments, only: [:create]
+  post '/webhook' => 'webhook#receive'
 end

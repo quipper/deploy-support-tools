@@ -91,5 +91,88 @@ describe App do
         expect(inc.lottery 'yah').to eq 2
       end
     end
+
+    context 'when there are some removed entries' do
+      before do
+        app.lottery 'foo' # => 1
+        app.lottery 'bar' # => 2
+        app.lottery 'baz' # => 3
+
+        app.remove 'bar'
+        app.remove 'baz'
+      end
+
+      context 'and pushed a new branch' do
+        it 'deletes "removed" flag' do
+          expect {
+            app.lottery('woo')
+          }.to change {
+            app.entries[1]['removed']
+          }.from(true).to(nil)
+        end
+
+        it 'returns number of removed branch' do
+          expect(app.lottery('woo')).to eq 2
+        end
+      end
+
+      context 'and pushed removed branch again' do
+        it 'deletes "removed" flag' do
+          expect {
+            app.lottery('baz')
+          }.to change {
+            app.entries[2]['removed']
+          }.from(true).to(nil)
+        end
+
+        it 'returns same number again' do
+          expect(app.lottery('baz')).to eq 3
+        end
+      end
+    end
+  end
+
+  describe '#remove' do
+    context 'when specified branch exists' do
+      before do
+        app.lottery 'foo'
+        app.lottery 'bar'
+        app.lottery 'baz'
+
+        app.remove('bar')
+      end
+
+      it 'set `removed` flag to target branch' do
+        expect(app.entries[0]['removed']).to be_nil
+        expect(app.entries[1]['removed']).to be true
+        expect(app.entries[2]['removed']).to be_nil
+      end
+    end
+
+    context 'when specified branch does not exist' do
+      before do
+        app.lottery 'foo'
+        app.lottery 'bar'
+        app.lottery 'baz'
+
+        app.remove('foobar')
+      end
+
+      it 'does not set `removed` flag to any entries' do
+        expect(app.entries[0]['removed']).to be_nil
+        expect(app.entries[1]['removed']).to be_nil
+        expect(app.entries[2]['removed']).to be_nil
+      end
+    end
+
+    context 'when no entry exists' do
+      before do
+        app.remove('foo')
+      end
+
+      it 'does not change entries' do
+        expect(app.entries).to eq []
+      end
+    end
   end
 end
