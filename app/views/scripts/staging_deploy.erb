@@ -96,7 +96,7 @@ function build_url() {
 }
 
 function notify_all() {
-  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}&repo_name=${REPO_NAME}"`
   if [ "${HEROKU_APP_NAME}" == "" ]; then
     echo "failed to get a staging app name"
     exit 1
