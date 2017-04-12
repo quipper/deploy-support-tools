@@ -7,7 +7,7 @@ class WebhookController < ApplicationController
       return
     end
 
-    webhook = JSON.parse(params[:webhook]) rescue {}
+    webhook = JSON.parse(params[:payload]) rescue {}
     repo_name = webhook.dig('pull_request', 'base', 'repo', 'full_name')
     repo_config = RepoConfig.find_by_repo_name(repo_name)
 

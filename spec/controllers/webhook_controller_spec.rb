@@ -34,7 +34,7 @@ RSpec.describe WebhookController, type: :controller do
 
         subject do
           request.headers['X-GitHub-Event'] = 'pull_request'
-          post :receive, {webhook: webhook_params.to_json}
+          post :receive, {payload: webhook_params.to_json}
         end
 
         before do
