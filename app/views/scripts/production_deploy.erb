@@ -25,6 +25,12 @@ if [ "${HEROKU_APPS}" == "" ]; then
   exit 1
 fi
 
+if [ "${USE_HEROKU_DEPLOY_WRAP}" == "1" ]; then
+  GIT_PUSH="heroku-deploy-wrap -- git push"
+else
+  GIT_PUSH="git push"
+fi
+
 function prepare() {
   if [ "$(type -t prepare_for_production_server)" == "function" ]; then
     prepare_for_production_server
@@ -50,7 +56,7 @@ EOF
 
       prepare
       git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
-      if ! GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master; then
+      if ! GIT_TRACE=1 ${GIT_PUSH} -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master; then
           rm -rf /home/ubuntu/${CIRCLE_PROJECT_REPONAME}
           cd /home/ubuntu
           git clone --recursive git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git
@@ -59,7 +65,7 @@ EOF
           git submodule update
           prepare
           git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
-          GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
+          GIT_TRACE=1 ${GIT_PUSH} -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
       fi
       heroku config:add GIT_COMMIT_SHA1=${CIRCLE_SHA1} --app ${herokuapp}
   done
