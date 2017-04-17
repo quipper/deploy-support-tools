@@ -36,6 +36,9 @@ function deploy() {
 machine api.heroku.com
   login ${HEROKU_USER}
   password ${HEROKU_API_TOKEN}
+machine git.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
 EOF
 
   chmod 600 ${HOME}/.netrc
