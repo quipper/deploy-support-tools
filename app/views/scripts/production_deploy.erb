@@ -46,6 +46,7 @@ EOF
   for herokuapp in ${HEROKU_APPS}
   do
       heroku config:add HEROKU_APP_NAME="${herokuapp}" --app ${herokuapp}
+      heroku config:set BUNDLE_WITHOUT="development:test:darwin"
       heroku features:enable --app ${herokuapp} preboot || :
 
       prepare
