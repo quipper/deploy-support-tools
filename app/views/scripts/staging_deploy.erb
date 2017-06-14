@@ -62,7 +62,7 @@ EOF
   heroku git:remote --ssh-git --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME} ${OPTION_HEROKU_ORGANIZATION}
   heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}" --app ${HEROKU_APP_NAME}
   heroku config:add GIT_COMMIT_SHA1=${CIRCLE_SHA1} --app ${HEROKU_APP_NAME}
-  heroku config:set BUNDLE_WITHOUT="development:test:darwin"
+  heroku config:set BUNDLE_WITHOUT="development:test:darwin" --app ${HEROKU_APP_NAME}
 
   prepare_for_staging_server
 
