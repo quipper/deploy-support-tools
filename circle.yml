@@ -1,9 +1,24 @@
-deployment:
-  feature:
-    branch: /^(?!^master$).+$/
-    commands:
-      - echo "doesn't support feature branch deploy"
-  production:
-    branch: master
-    commands:
-      - ./script/production_deploy.sh
+version: 2
+jobs:
+  build:
+    working_directory: ~/deploy-support-tools
+    docker:
+      - image: circleci/ruby:2.3.3-node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - deploy-support-tools-bundle-{{ checksum "Gemfile.lock" }}
+      - run: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+      - save_cache:
+          key: deploy-support-tools-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/deploy-support-tools/vendor/bundle
+
+      - run: bundle exec rspec
+
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "production" ]; then
+              ./script/production_deploy.sh
+            fi
