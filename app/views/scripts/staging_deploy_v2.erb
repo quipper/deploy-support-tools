@@ -1,3 +1,5 @@
+[ -n "${CI_DEBUG}" ] && set -x
+
 if [ "${CIRCLECI}" == "" ]; then
   echo 'not in CircleCI env'
   exit 1
