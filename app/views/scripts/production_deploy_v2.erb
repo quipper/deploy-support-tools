@@ -1,0 +1,75 @@
+#!/bin/bash -e
+
+if [ "${CIRCLECI}" == "" ]; then
+  echo 'not in CircleCI env'
+  exit 1
+fi
+
+if [ "${HEROKU_USER}" == "" ]; then
+  echo "HEROKU_USER is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${HEROKU_API_TOKEN}" == "" ]; then
+  echo "HEROKU_API_TOKEN is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${HEROKU_APPS}" == "" ]; then
+  echo "HEROKU_APPS is not set"
+  exit 1
+fi
+
+function prepare() {
+  if [ "$(type -t prepare_for_production_server)" == "function" ]; then
+    prepare_for_production_server
+  fi
+}
+
+function deploy() {
+  setup_heroku_cli
+
+  for herokuapp in ${HEROKU_APPS}
+  do
+      heroku config:add HEROKU_APP_NAME="${herokuapp}" --app ${herokuapp}
+      heroku config:add BUNDLE_WITHOUT="development:test:darwin" --app ${herokuapp}
+      heroku features:enable --app ${herokuapp} preboot || :
+
+      prepare
+      git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
+      if ! GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master; then
+          rm -rf /home/ubuntu/${CIRCLE_PROJECT_REPONAME}
+          cd /home/ubuntu
+          git clone --recursive git@github.com:${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git
+          cd ${CIRCLE_PROJECT_REPONAME}
+          git reset --hard ${CIRCLE_SHA1}  # this isn't strictly necessary
+          git submodule update
+          prepare
+          git remote add heroku-${herokuapp} git@heroku.com:${herokuapp}.git || echo
+          GIT_TRACE=1 git push -f heroku-${herokuapp} ${CIRCLE_SHA1}:refs/heads/master
+      fi
+      heroku config:add GIT_COMMIT_SHA1=${CIRCLE_SHA1} --app ${herokuapp}
+  done
+}
+
+function setup_heroku_cli() {
+  # https://devcenter.heroku.com/articles/heroku-cli#standalone
+  wget https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-linux-x64.tar.gz -O heroku.tar.gz
+  tar -xzf heroku.tar.gz
+  sudo mkdir -p /usr/local/lib /usr/local/bin
+  sudo mv $(find . -maxdepth 1 -name 'heroku-cli-v*-*-linux-x64') /usr/local/lib/heroku
+  sudo ln -s /usr/local/lib/heroku/bin/heroku /usr/local/bin/heroku
+  heroku version
+
+  cat > ${HOME}/.netrc <<EOF
+machine api.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+machine git.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+EOF
+  chmod 600 ${HOME}/.netrc
+
+  ssh-keyscan -H heroku.com >> ~/.ssh/known_hosts
+}

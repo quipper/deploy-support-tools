@@ -7,6 +7,8 @@ HerokuSupportTools::Application.routes.draw do
   end
   get '/scripts/production_deploy.sh(.:format)', to: 'scripts#production_deploy'
   get '/scripts/staging_deploy.sh(.:format)', to: 'scripts#staging_deploy'
+  get '/scripts/v2/production_deploy.sh(.:format)', to: 'scripts#production_deploy_v2'
+  get '/scripts/v2/staging_deploy.sh(.:format)', to: 'scripts#staging_deploy_v2'
 
   resources :deployments, only: [:create]
   post '/webhook' => 'webhook#receive'
