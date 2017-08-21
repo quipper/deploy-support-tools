@@ -19,6 +19,6 @@ jobs:
 
       - deploy:
           command: |
-            if [ "${CIRCLE_BRANCH}" == "production" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ./script/production_deploy.sh
             fi
