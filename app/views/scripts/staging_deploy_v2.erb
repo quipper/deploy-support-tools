@@ -1,0 +1,129 @@
+[ -n "${CI_DEBUG}" ] && set -x
+
+if [ "${CIRCLECI}" == "" ]; then
+  echo 'not in CircleCI env'
+  exit 1
+fi
+
+if [ "${HEROKU_USER}" == "" ]; then
+  echo "HEROKU_USER is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${HEROKU_API_TOKEN}" == "" ]; then
+  echo "HEROKU_API_TOKEN is not set in CircleCI env. set here https://circleci.com/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/edit#env-vars"
+  exit 1
+fi
+
+if [ "${STAGING_APP_PREFIX}" == "" ]; then
+  echo "STAGING_APP_PREFIX is not set"
+  exit 1
+fi
+
+if [ "${NUM_OF_STAGING_SERVERS}" == "" ]; then
+  echo "NUM_OF_STAGING_SERVERS is not set"
+  exit 1
+fi
+
+if [ "${CIRCLE_BRANCH}" == "" ]; then
+  echo "CIRCLE_BRANCH is not set"
+  exit 1
+fi
+
+function deploy() {
+  setup_heroku_cli
+
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}"`
+
+  if [ "${HEROKU_APP_NAME}" == "" ]; then
+    echo "failed to get a staging app name"
+    exit 1
+  fi
+
+  check_missing_blob
+
+  if [ "${HEROKU_ORGANIZATION}" != "" ]; then
+    OPTION_HEROKU_ORGANIZATION="--org ${HEROKU_ORGANIZATION}"
+  else
+    OPTION_HEROKU_ORGANIZATION=""
+  fi
+
+  heroku git:remote --ssh-git --app ${HEROKU_APP_NAME} || heroku create ${HEROKU_APP_NAME} ${OPTION_HEROKU_ORGANIZATION}
+  heroku config:add HEROKU_APP_NAME="${HEROKU_APP_NAME}" --app ${HEROKU_APP_NAME}
+  heroku config:add GIT_COMMIT_SHA1=${CIRCLE_SHA1} --app ${HEROKU_APP_NAME}
+
+  prepare_for_staging_server
+
+  # https://github.com/quipper/deploy-support-tools/pull/5#issuecomment-36588889
+  [[ ! -s "$(git rev-parse --git-dir)/shallow" ]] || git fetch --unshallow
+  GIT_TRACE=1 git push -f heroku ${CIRCLE_SHA1}:refs/heads/master || exit $?
+
+  notify_all
+}
+
+function check_missing_blob() {
+  if [[ -n $(git fsck --no-progress | grep -F missing) ]]; then
+    reclone
+  fi
+}
+
+function reclone() {
+  REMOTE=`git ls-remote --get-url origin`
+  CUR=`pwd`
+  cd ~/
+  rm -rf ${CUR}
+  git clone --recursive ${REMOTE}
+  cd ${CUR}
+  git reset --hard ${CIRCLE_SHA1} # this isn't strictly necessary
+  git submodule update
+}
+
+function notify() {
+  # this is dummy method for a backward compatbility
+  :
+}
+
+function build_url() {
+  echo "https://${1}.herokuapp.com"
+}
+
+function notify_all() {
+  HEROKU_APP_NAME=`curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/apps --data "app=${STAGING_APP_PREFIX}&branch=${CIRCLE_BRANCH}&servers=${NUM_OF_STAGING_SERVERS}&repo_name=${REPO_NAME}"`
+  if [ "${HEROKU_APP_NAME}" == "" ]; then
+    echo "failed to get a staging app name"
+    exit 1
+  fi
+
+  URL=`build_url ${HEROKU_APP_NAME}`
+
+  # notify github via deployments api
+  curl <%= ENV['DEPLOY_SUPPORT_TOOL_URL'] %>/deployments \
+    -d "user=${CIRCLE_PROJECT_USERNAME}" \
+    -d "repo=${CIRCLE_PROJECT_REPONAME}" \
+    -d "ref=${CIRCLE_BRANCH}" \
+    -d "environment=staging" \
+    -d "state=success" \
+    -d "target_url=${URL}"
+}
+
+function setup_heroku_cli() {
+  # https://devcenter.heroku.com/articles/heroku-cli#standalone
+  wget https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-linux-x64.tar.gz -O heroku.tar.gz
+  tar -xzf heroku.tar.gz
+  sudo mkdir -p /usr/local/lib /usr/local/bin
+  sudo mv $(find . -maxdepth 1 -name 'heroku-cli-v*-*-linux-x64') /usr/local/lib/heroku
+  sudo ln -s /usr/local/lib/heroku/bin/heroku /usr/local/bin/heroku
+  heroku version
+
+  cat > ${HOME}/.netrc <<EOF
+machine api.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+machine git.heroku.com
+  login ${HEROKU_USER}
+  password ${HEROKU_API_TOKEN}
+EOF
+  chmod 600 ${HOME}/.netrc
+
+  ssh-keyscan -H heroku.com >> ~/.ssh/known_hosts
+}
