@@ -107,13 +107,15 @@ function notify_all() {
 }
 
 function setup_heroku_cli() {
-  # https://devcenter.heroku.com/articles/heroku-cli#standalone
-  wget https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-linux-x64.tar.gz -O heroku.tar.gz
-  tar -xzf heroku.tar.gz
-  sudo mkdir -p /usr/local/lib /usr/local/bin
-  sudo mv $(find . -maxdepth 1 -name 'heroku-cli-v*-*-linux-x64') /usr/local/lib/heroku
-  sudo ln -s /usr/local/lib/heroku/bin/heroku /usr/local/bin/heroku
-  heroku version
+  if [ "$(command -v heroku)" == "" ]; then
+    # https://devcenter.heroku.com/articles/heroku-cli#standalone
+    wget https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli-linux-x64.tar.gz -O heroku.tar.gz
+    tar -xzf heroku.tar.gz
+    sudo mkdir -p /usr/local/lib /usr/local/bin
+    sudo mv $(find . -maxdepth 1 -name 'heroku-cli-v*-*-linux-x64') /usr/local/lib/heroku
+    sudo ln -s /usr/local/lib/heroku/bin/heroku /usr/local/bin/heroku
+    heroku version
+  fi
 
   cat > ${HOME}/.netrc <<EOF
 machine api.heroku.com
