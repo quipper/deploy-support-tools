@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 ruby File.read(File.join File.dirname(__FILE__), '.ruby-version').strip
 
-gem 'rails', '~> 4.2.9'
-gem 'jbuilder', '~> 1.2'
+gem 'rails', '< 5'
+gem 'jbuilder'
 
 group :doc do
   gem 'sdoc', require: false
@@ -12,7 +12,7 @@ gem 'dalli'
 gem 'httpclient'
 gem 'bootstrap-sass'
 gem 'sass-rails'
-gem 'sprockets', '=2.11.0'
+gem 'sprockets'
 gem 'jquery-rails'
 gem 'coffee-rails'
 gem 'uglifier'
