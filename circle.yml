@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/deploy-support-tools
     docker:
-      - image: circleci/ruby:2.4.2-node
+      - image: circleci/ruby:2.5.0-node
     steps:
       - checkout
       - restore_cache:
