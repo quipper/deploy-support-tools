@@ -1,3 +1,3 @@
-# Simple Heroku support tools for Quipper
+# [Deprecated] Simple Heroku support tools for Quipper
 
-See usage: [here](/spec/integration/names_spec.rb)
+Use Heroku Review Apps instead. https://devcenter.heroku.com/articles/github-integration-review-apps
