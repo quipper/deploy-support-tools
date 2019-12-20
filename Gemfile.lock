@@ -110,7 +110,7 @@ GEM
       byebug (~> 9.1)
       pry (~> 0.10)
     public_suffix (3.0.1)
-    rack (1.6.8)
+    rack (1.6.12)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.10)
